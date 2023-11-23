@@ -1,7 +1,7 @@
 import redis as redis
 from fastapi_users.authentication import BearerTransport, RedisStrategy, AuthenticationBackend
 
-from src.config import REDIS_HOST, REDIS_PORT
+from config import REDIS_HOST, REDIS_PORT
 
 bearer_transport = BearerTransport(tokenUrl="auth/bearer/login")
 
