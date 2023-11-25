@@ -21,7 +21,7 @@ user = Table(
     Column("id", Integer, primary_key=True),
     Column("username", String, nullable=False),
     Column("email", String, nullable=False),
-    Column("hash_password", String, nullable=False),
+    Column("hashed_password", String, nullable=False),
     Column("registration_at", TIMESTAMP, default=datetime.utcnow),
     Column("role_id", Integer, ForeignKey(role.c.id)),
     Column("is_active", Boolean, default=True, nullable=False),
@@ -41,5 +41,5 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     """
     id = Column(Integer, primary_key=True)
     username = Column(String, nullable=False)
-    registered_at = Column(TIMESTAMP, default=datetime.utcnow)
+    registration_at = Column(TIMESTAMP, default=datetime.utcnow)
     role_id = Column(Integer, ForeignKey(role.c.id))
