@@ -10,9 +10,11 @@ fastapi_users = FastAPIUsers[User, int](
     get_user_manager,
     [auth_backend],
 )
+
 app = FastAPI(
     title="Банка счастья",
 )
+
 app.include_router(
     fastapi_users.get_auth_router(auth_backend),
     prefix="/auth/bearer",

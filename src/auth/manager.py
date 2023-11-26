@@ -1,14 +1,14 @@
-import uuid
 from typing import Optional
+from typing_extensions import override
+
+from config import SECRET
 
 from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_users import BaseUserManager, IntegerIDMixin, exceptions, models
-from typing_extensions import override
 
 from auth.models import User
 from auth.utils import get_user_db, SQLAlchemyUserDatabaseExtended
-from config import SECRET
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
@@ -49,7 +49,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             self, credentials: OAuth2PasswordRequestForm
     ) -> Optional[models.UP]:
         """
-        Authenticate and return a user following an email and a password.
+        Authenticate and return a user following a username/email and a password.
 
         Will automatically upgrade password hash if necessary.
 
@@ -58,8 +58,8 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         try:
             user = await self.get_by_username(credentials.username)
         except exceptions.UserNotExists:
-            # Run the hasher to mitigate timing attack
-            # Inspired from Django: https://code.djangoproject.com/ticket/20760
+            user = await self.get_by_email(credentials.username)
+        except exceptions.UserNotExists:
             self.password_helper.hash(credentials.password)
             return None
 
