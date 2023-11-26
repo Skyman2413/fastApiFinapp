@@ -1,15 +1,9 @@
 from fastapi import FastAPI
-from fastapi_users import FastAPIUsers
 
-from auth.auth import auth_backend
-from auth.models import User
-from auth.manager import get_user_manager
-from auth.schemas import UserRead, UserCreate
+import tasks.router
+from auth.auth import auth_backend, fastapi_users
+from auth.schemas import UserRead, UserCreate, UserUpdate
 
-fastapi_users = FastAPIUsers[User, int](
-    get_user_manager,
-    [auth_backend],
-)
 
 app = FastAPI(
     title="Банка счастья",
@@ -27,6 +21,23 @@ app.include_router(
     tags=["auth"],
 )
 
+app.include_router(
+    fastapi_users.get_verify_router(UserRead),
+    prefix="/auth",
+    tags=["auth"]
+)
+
+app.include_router(
+    fastapi_users.get_users_router(UserRead, UserUpdate),
+    prefix="/users",
+    tags=["users"],
+)
+
+app.include_router(
+    router=tasks.router.router,
+    prefix="/test_mail",
+    tags=["mail"]
+)
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -35,3 +46,4 @@ async def root():
 @app.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
+

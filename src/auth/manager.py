@@ -58,10 +58,11 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         try:
             user = await self.get_by_username(credentials.username)
         except exceptions.UserNotExists:
-            user = await self.get_by_email(credentials.username)
-        except exceptions.UserNotExists:
-            self.password_helper.hash(credentials.password)
-            return None
+            try:
+                user = await self.get_by_email(credentials.username)
+            except exceptions.UserNotExists:
+                self.password_helper.hash(credentials.password)
+                return None
 
         verified, updated_password_hash = self.password_helper.verify_and_update(
             credentials.password, user.hashed_password

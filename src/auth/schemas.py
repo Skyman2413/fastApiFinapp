@@ -19,5 +19,9 @@ class UserCreate(schemas.BaseUserCreate):
     pass
 
 
-'''class UserUpdate(schemas.BaseUserUpdate):
-    pass'''
+class UserUpdate(schemas.BaseUserUpdate):
+    id: int
+    username: str
+    registration_at: datetime.datetime
+    role_id: int
+    pass
